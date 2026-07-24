@@ -1,0 +1,25 @@
+groups:
+  - name: monitoring-alerts
+
+    rules:
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 1m
+
+        labels:
+          severity: critical
+
+        annotations:
+          summary: "Prometheus is down"
+          description: "Prometheus has not been reachable for more than one minute."
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 2m
+
+        labels:
+          severity: warning
+
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is above 80%."
